@@ -1,5 +1,5 @@
 # -*- coding:utf-8 -*-
-"""Sample training code, SchNet architecture is adopted, alchemy is needed, layers tech is also needed
+"""SchNet architecture is applied, alchemy is used
 """
 import numpy as np
 import pandas as pd
