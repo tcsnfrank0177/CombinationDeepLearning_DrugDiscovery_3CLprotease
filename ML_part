@@ -1,0 +1,6 @@
+The recommeded classical ML components for second-screening:
+ DecisionTree
+ K-Neighbors
+ LogisticRegression
+ RandomForest
+ SVC
