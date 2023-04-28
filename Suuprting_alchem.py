@@ -19,14 +19,6 @@ import pathlib
 import pandas as pd
 import numpy as np
 _urls = {'Alchemy': 'https://alchemy.tencent.com/data/'}
-
-
-class AlchemyBatcher:
-    def __init__(self, graph=None, label=None):
-        self.graph = graph
-        self.label = label
-
-
 def batcher():
     def batcher_dev(batch):
         graphs, labels = zip(*batch)
@@ -35,6 +27,14 @@ def batcher():
         return AlchemyBatcher(graph=batch_graphs, label=labels)
 
     return batcher_dev
+
+class AlchemyBatcher:
+    def __init__(self, graph=None, label=None):
+        self.graph = graph
+        self.label = label
+
+
+
 
 
 class TencentAlchemyDataset(Dataset):
@@ -208,30 +208,9 @@ class TencentAlchemyDataset(Dataset):
         #     if self.mode == 'dev' else torch.LongTensor([int(sdf_file.stem)])
         return (g, l)
 
-    def __init__(self, mode='Train', transform=None):
-        assert mode in ['Train', 'valid',
-                        'Test'], "mode should be dev/valid/test"
-        self.mode = mode
-        self.transform = transform
-        self.file_path = './'
-        # self.file_dir = pathlib.Path('./Alchemy_data', mode)
-        # self.zip_file_path = pathlib.Path('./Alchemy_data', '%s.zip' % mode)
-        # download(_urls['Alchemy'] + "%s.zip" % mode,
-        #          path=str(self.zip_file_path))
-        # if not os.path.exists(str(self.file_dir)):
-        #     archive = zipfile.ZipFile(self.zip_file_path)
-        #     archive.extractall('./Alchemy_data')
-        #     archive.close()
 
-        # self._load()
-    def read_file(file_path):
-        """
-        Reads a SMILES file.
-        """
-        with open(file_path, "r") as file:
-            return [smi.rstrip().split() for smi in file]
-
-    def _load(self):
+    
+        def _load(self):
         if self.mode == 'Train':
             file_dir = pathlib.Path('./')
             # target_file = pathlib.Path(file_dir, "delaney.csv")
@@ -252,7 +231,22 @@ class TencentAlchemyDataset(Dataset):
             self.labels.append(result[1])
         self.normalize()
         print(len(self.graphs), "loaded!")
+    def __init__(self, mode='Train', transform=None):
+        assert mode in ['Train', 'valid',
+                        'Test'], "mode should be dev/valid/test"
+        self.mode = mode
+        self.transform = transform
+        self.file_path = './'
+        # self.file_dir = pathlib.Path('./Alchemy_data', mode)
+        # self.zip_file_path = pathlib.Path('./Alchemy_data', '%s.zip' % mode)
+        # download(_urls['Alchemy'] + "%s.zip" % mode,
+        #          path=str(self.zip_file_path))
+        # if not os.path.exists(str(self.file_dir)):
+        #     archive = zipfile.ZipFile(self.zip_file_path)
+        #     archive.extractall('./Alchemy_data')
+        #     archive.close()
 
+        # self._load()
     def normalize(self, mean=None, std=None):
         labels = np.array([i.numpy() for i in self.labels])
         if mean is None:
@@ -270,6 +264,15 @@ class TencentAlchemyDataset(Dataset):
         if self.transform:
             g = self.transform(g)
         return g, l
+
+    
+    def read_file(file_path):
+        """
+        Reads a SMILES file.
+        """
+        with open(file_path, "r") as file:
+            return [smi.rstrip().split() for smi in file]
+
 
 
 if __name__ == '__main__':
